@@ -517,6 +517,14 @@
       return normalize(value).toLowerCase();
     }
 
+    // Exact comparison: capitalization matters.
+    function exactInput(value) {
+      return value
+        .trim()
+        .replace(/[’']/g, "'")
+        .replace(/\s+/g, ' ');
+    }
+
     function canonicalInput(value) {
       const normalized = normalize(value);
       return ALIASES.get(normalized) || value.trim();
@@ -833,6 +841,18 @@
         );
       }
 
+      if (newAttemptCount >= 4) {
+        continentInput.value = selected.name;
+        setFeedback(
+          `The correct answer is: ${selected.name}`,
+          'success'
+        );
+        setTimeout(() => {
+          markCorrect();
+        }, 900);
+        return;
+      }
+
       if (newAttemptCount >= 2) {
         feedback.textContent += ` ${getHint(selected.name)}`;
       }
@@ -851,7 +871,7 @@
         return;
       }
 
-      if (normalize(entered) === normalize(selected.name)) {
+      if (exactInput(entered) === exactInput(selected.name)) {
         markCorrect();
       } else {
         handleWrongAnswer(continentInput.value);
@@ -1122,6 +1142,18 @@
         );
       }
 
+      if (newAttemptCount >= 4) {
+        countryInput.value = selectedCountry.name;
+        setCountryFeedback(
+          `The correct answer is: ${selectedCountry.name}`,
+          'success'
+        );
+        setTimeout(() => {
+          markCountryCorrect();
+        }, 900);
+        return;
+      }
+
       if (newAttemptCount >= 2) {
         countryFeedback.textContent += ` ${getCountryHint(selectedCountry.name)}`;
       }
@@ -1161,7 +1193,7 @@
         return;
       }
 
-      if (normalize(entered) === normalize(selectedCountry.name)) {
+      if (exactInput(entered) === exactInput(selectedCountry.name)) {
         markCountryCorrect();
       } else {
         handleWrongCountryAnswer(countryInput.value);
