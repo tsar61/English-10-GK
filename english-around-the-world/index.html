@@ -105,6 +105,41 @@
       stroke-width: .75;
     }
 
+    #worldMapStep2 .english-country {
+      cursor: pointer;
+      transition: fill .15s ease, filter .15s ease, stroke-width .15s ease;
+    }
+
+    #worldMapStep2 .english-country:hover {
+      fill: #ef8b2c;
+      stroke: #b95f08;
+      stroke-width: 1.2;
+      filter: brightness(1.03);
+    }
+
+    #worldMapStep2 .english-country.active {
+      fill: #ef8b2c;
+      stroke: #b95f08;
+      stroke-width: 1.4;
+    }
+
+    #worldMapStep2 .english-country.correct {
+      fill: #4f9b70;
+      stroke: #2e6d4a;
+      stroke-width: .75;
+    }
+
+    .country-label {
+      pointer-events: none;
+      font-size: 13px;
+      font-weight: 800;
+      fill: #183c3c;
+      paint-order: stroke;
+      stroke: rgba(255,255,255,.96);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+    }
+
     .small-scroll::-webkit-scrollbar {
       height: 8px;
       width: 8px;
@@ -255,27 +290,118 @@
       </div>
     </section>
 
-    <section id="step2Section" class="hidden bg-white rounded-b-2xl shadow-md p-4 md:p-7">
-      <div class="mb-4 md:mb-5">
-        <h2 class="text-lg md:text-xl font-bold">Look at the map.</h2>
-        <p class="text-sm md:text-base text-slate-600 mt-1">
-          What do the dark green countries have in common?
-        </p>
-      </div>
+    <section id="step2" class="hidden bg-white rounded-b-2xl shadow-md p-4 md:p-7">
+      <div class="grid lg:grid-cols-[1fr_340px] gap-5 lg:gap-7">
 
-      <div class="map-wrap rounded-2xl border border-slate-200 overflow-hidden shadow-inner relative">
-        <div id="step2Loading"
-             class="absolute inset-0 z-10 flex items-center justify-center bg-[#d9f0f7]/95">
-          <div class="text-center">
-            <div class="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-bookOrange"></div>
-            <p class="font-semibold">World map is loading ...</p>
+        <div>
+          <div class="mb-3">
+            <h2 class="text-lg md:text-xl font-bold">Name the countries</h2>
+            <p class="text-sm md:text-base text-slate-600 mt-1">
+              Click a dark country. Type its English name.
+            </p>
+          </div>
+
+          <div class="map-wrap rounded-2xl border border-slate-200 overflow-hidden shadow-inner relative">
+            <div id="step2Loading"
+                 class="absolute inset-0 z-10 flex items-center justify-center bg-[#d9f0f7]/95">
+              <div class="text-center">
+                <div class="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-bookOrange"></div>
+                <p class="font-semibold">World map is loading ...</p>
+              </div>
+            </div>
+
+            <svg id="worldMapStep2"
+                 viewBox="0 0 1000 520"
+                 class="w-full h-auto block"
+                 aria-label="Interactive world map showing selected English-speaking countries"></svg>
+          </div>
+
+          <div class="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs md:text-sm text-slate-600">
+            <span class="inline-flex items-center gap-2">
+              <span class="w-4 h-4 rounded bg-[#4f9b70] border border-[#2e6d4a]"></span>
+              dark countries
+            </span>
+
+            <span class="inline-flex items-center gap-2">
+              <span class="w-4 h-4 rounded bg-[#ef8b2c] border border-[#b95f08]"></span>
+              selected
+            </span>
+
+            <span class="inline-flex items-center gap-2">
+              <span class="w-4 h-4 rounded bg-white border border-slate-300"></span>
+              other countries
+            </span>
           </div>
         </div>
 
-        <svg id="worldMapStep2"
-             viewBox="0 0 1000 520"
-             class="w-full h-auto block"
-             aria-label="World map showing countries where English is a first or official language"></svg>
+        <aside class="lg:sticky lg:top-5 self-start">
+          <div id="countryInputCard"
+               class="rounded-2xl border border-slate-200 bg-slate-50 p-4 md:p-5 min-h-[250px] flex flex-col justify-center">
+
+            <div id="countryEmptyState" class="text-center">
+              <div class="text-4xl mb-3" aria-hidden="true">🌎</div>
+              <h3 class="font-bold text-lg">Choose a country</h3>
+              <p class="text-sm text-slate-600 mt-2">
+                Click a dark country on the map first.
+              </p>
+            </div>
+
+            <div id="countryAnswerState" class="hidden">
+              <p class="text-xs uppercase tracking-wider font-bold text-slate-500">
+                Your country
+              </p>
+
+              <div id="activeCountryHint"
+                   class="mt-1 text-xl font-bold text-slate-900">
+                —
+              </div>
+
+              <label for="countryInput"
+                     class="block mt-4 text-sm font-semibold">
+                English name:
+              </label>
+
+              <div class="mt-2 flex gap-2">
+                <input id="countryInput"
+                       class="focus-ring min-w-0 flex-1 rounded-xl border-2 border-slate-300 bg-white px-3 py-2.5 text-base font-medium shadow-sm"
+                       autocomplete="off"
+                       autocapitalize="words"
+                       spellcheck="false"
+                       placeholder="Type the name here">
+
+                <button id="countryCheckBtn"
+                        class="focus-ring rounded-xl bg-bookOrange px-4 py-2.5 font-bold text-white shadow-sm hover:brightness-95 active:scale-[.98]">
+                  Check
+                </button>
+              </div>
+
+              <p id="countryFeedback"
+                 class="min-h-[54px] mt-3 text-sm font-semibold"
+                 aria-live="polite"></p>
+
+              <button id="countryClearBtn"
+                      class="focus-ring mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold hover:bg-slate-100">
+                Clear selection
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+            <h3 class="font-bold">Correct country names</h3>
+            <p class="text-xs text-slate-500 mt-1">
+              Correct answers stay on the map.
+            </p>
+            <div id="countrySolvedList"
+                 class="small-scroll mt-3 flex flex-wrap gap-2 max-h-40 overflow-y-auto"></div>
+          </div>
+
+          <div class="mt-4 rounded-2xl bg-slate-100 p-4 text-sm">
+            <p class="font-bold">Need help?</p>
+            <p class="text-slate-600 mt-1">
+              After two wrong tries, you get a small hint.
+            </p>
+          </div>
+        </aside>
       </div>
     </section>
   </main>
@@ -302,11 +428,11 @@
     ];
 
     const ALIASES = new Map([
-      ['oceania', 'Australia'],
-      ['australia and oceania', 'Australia'],
-      ['australia/oceania', 'Australia'],
-      ['northamerica', 'North America'],
-      ['southamerica', 'South America']
+      ['Oceania', 'Australia'],
+      ['Australia and Oceania', 'Australia'],
+      ['Australia/Oceania', 'Australia'],
+      ['Northamerica', 'North America'],
+      ['Southamerica', 'South America']
     ]);
 
     /*
@@ -355,23 +481,40 @@
     const feedback = document.getElementById('feedback');
     const solvedList = document.getElementById('solvedList');
     const step1Section = document.querySelector('main > section');
-    const step2Section = document.getElementById('step2Section');
+    const step2Section = document.getElementById('step2');
     const unitTitle = document.getElementById('unitTitle');
     const stepTitle = document.getElementById('stepTitle');
     const worldMapStep2 = document.getElementById('worldMapStep2');
     const step2Loading = document.getElementById('step2Loading');
+    const countryEmptyState = document.getElementById('countryEmptyState');
+    const countryAnswerState = document.getElementById('countryAnswerState');
+    const activeCountryHint = document.getElementById('activeCountryHint');
+    const countryInput = document.getElementById('countryInput');
+    const countryCheckBtn = document.getElementById('countryCheckBtn');
+    const countryClearBtn = document.getElementById('countryClearBtn');
+    const countryFeedback = document.getElementById('countryFeedback');
+    const countrySolvedList = document.getElementById('countrySolvedList');
+
+    let selectedCountry = null;
+    const solvedCountries = new Set();
+    const countryAttempts = new Map();
 
     let selected = null;
     const solved = new Set();
     const attempts = new Map();
     let currentGeojson = null;
 
+    // Normalizes spacing and apostrophes, but deliberately keeps capitalization.
     function normalize(value) {
       return value
         .trim()
-        .toLowerCase()
         .replace(/[’']/g, "'")
         .replace(/\s+/g, ' ');
+    }
+
+    // Used only to detect capitalization errors and to give helpful feedback.
+    function normalizeForCaseCheck(value) {
+      return normalize(value).toLowerCase();
     }
 
     function canonicalInput(value) {
@@ -451,6 +594,18 @@
       'South Africa',
       'Lesotho',
       'Eswatini'
+    ]);
+
+    const COUNTRY_ALIASES = new Map([
+      ['UK', 'United Kingdom'],
+      ['Great Britain', 'United Kingdom'],
+      ['England', 'United Kingdom'],
+      ['USA', 'United States of America'],
+      ['United States', 'United States of America'],
+      ['US', 'United States of America'],
+      ['Swaziland', 'Eswatini'],
+      ['Tanzania', 'Tanzania'],
+      ['United Republic of Tanzania', 'Tanzania']
     ]);
 
     function featureCountryName(feature) {
@@ -650,6 +805,10 @@
         name => normalize(name) === entered
       ) || ALIASES.has(entered);
 
+      const caseOnlyError = CONTINENTS.some(
+        name => normalizeForCaseCheck(name) === normalizeForCaseCheck(value)
+      ) && !validContinent;
+
       const newAttemptCount = (attempts.get(selected.name) || 0) + 1;
       attempts.set(selected.name, newAttemptCount);
 
@@ -657,14 +816,19 @@
       void continentInput.offsetWidth;
       continentInput.classList.add('shake');
 
-      if (validContinent && entered !== selectedName) {
+      if (caseOnlyError) {
+        setFeedback(
+          'Check the capitalization and try again.',
+          'error'
+        );
+      } else if (validContinent && entered !== selectedName) {
         setFeedback(
           'That is a different continent. Try again.',
           'error'
         );
       } else {
         setFeedback(
-          'Check the spelling and try again.',
+          'Check the spelling and capitalization, then try again.',
           'error'
         );
       }
@@ -803,8 +967,213 @@
       updateProgress();
     }
 
+    function setCountryFeedback(message, type = 'error') {
+      countryFeedback.className = 'min-h-[54px] mt-3 text-sm font-semibold';
+      countryFeedback.classList.add(
+        type === 'success' ? 'text-emerald-700' : 'text-red-600'
+      );
+      countryFeedback.textContent = message;
+    }
+
+    function clearCountryFeedback() {
+      countryFeedback.className = 'min-h-[54px] mt-3 text-sm font-semibold';
+      countryFeedback.textContent = '';
+    }
+
+    function canonicalCountryInput(value) {
+      const normalized = normalize(value);
+      return COUNTRY_ALIASES.get(normalized) || value.trim();
+    }
+
+    function updateCountrySolvedList() {
+      countrySolvedList.innerHTML = '';
+
+      [...solvedCountries]
+        .sort((a, b) => a.localeCompare(b))
+        .forEach(name => {
+          const item = document.createElement('span');
+          item.className =
+            'rounded-full bg-emerald-50 border border-emerald-200 ' +
+            'px-2.5 py-1 text-xs font-bold text-emerald-800';
+          item.textContent = name;
+          countrySolvedList.appendChild(item);
+        });
+    }
+
+    function addCountryLabel(name, path) {
+      if (worldMapStep2.querySelector(`[data-country-label="${CSS.escape(name)}"]`)) return;
+
+      const bbox = path.getBBox();
+      const label = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'text'
+      );
+
+      label.setAttribute('x', bbox.x + bbox.width / 2);
+      label.setAttribute('y', bbox.y + bbox.height / 2);
+      label.setAttribute('text-anchor', 'middle');
+      label.setAttribute('class', 'country-label');
+      label.setAttribute('data-country-label', name);
+      label.textContent = name;
+      worldMapStep2.appendChild(label);
+    }
+
+    function selectCountry(name, path) {
+      if (solvedCountries.has(name)) return;
+
+      if (selectedCountry?.path) {
+        selectedCountry.path.classList.remove('active');
+      }
+
+      selectedCountry = { name, path };
+      path.classList.add('active');
+      activeCountryHint.textContent = 'Selected country';
+      countryEmptyState.classList.add('hidden');
+      countryAnswerState.classList.remove('hidden');
+
+      countryAnswerState.classList.remove('pop');
+      void countryAnswerState.offsetWidth;
+      countryAnswerState.classList.add('pop');
+
+      countryInput.value = '';
+      clearCountryFeedback();
+      countryInput.focus();
+    }
+
+    function clearCountrySelection() {
+      if (selectedCountry?.path && !solvedCountries.has(selectedCountry.name)) {
+        selectedCountry.path.classList.remove('active');
+      }
+
+      selectedCountry = null;
+      countryAnswerState.classList.add('hidden');
+      countryEmptyState.classList.remove('hidden');
+      countryInput.value = '';
+      clearCountryFeedback();
+      countryInput.blur();
+    }
+
+    const COUNTRY_HINTS = {
+      'Canada': 'It is in North America, above the United States.',
+      'United States of America': 'It is in North America, below Canada.',
+      'United Kingdom': 'It is an island country in Europe.',
+      'Ireland': 'It is an island west of the United Kingdom.',
+      'Jamaica': 'It is an island in the Caribbean, south of Cuba.',
+      'India': 'It is in South Asia, below the Himalayas.',
+      'Singapore': 'It is a small island country in South-East Asia.',
+      'Australia': 'It is the large country in the south-east.',
+      'New Zealand': 'It is the island country south-east of Australia.',
+      'Sierra Leone': 'It is on the west coast of Africa.',
+      'Liberia': 'It is on the west coast of Africa, next to Sierra Leone.',
+      'Ghana': 'It is on the west coast of Africa, next to Côte d’Ivoire.',
+      'Nigeria': 'It is on the west coast of Africa, next to Benin.',
+      'Cameroon': 'It is in central-west Africa, near the Gulf of Guinea.',
+      'Uganda': 'It is in East Africa, west of Kenya.',
+      'Kenya': 'It is in East Africa, next to Uganda.',
+      'Tanzania': 'It is in East Africa, below Kenya.',
+      'Zambia': 'It is in southern Africa, west of Malawi.',
+      'Malawi': 'It is a long, narrow country east of Zambia.',
+      'Zimbabwe': 'It is in southern Africa, south of Zambia.',
+      'Botswana': 'It is in southern Africa, west of Zimbabwe.',
+      'Namibia': 'It is on the south-west coast of Africa.',
+      'South Africa': 'It is at the southern tip of Africa.',
+      'Lesotho': 'It is a small country inside South Africa.',
+      'Eswatini': 'It is a small country east of South Africa.'
+    };
+
+    function getCountryHint(name) {
+      const firstLetter = name.charAt(0);
+      return `Hint: It starts with “${firstLetter}”. ${COUNTRY_HINTS[name] || 'Look carefully at its position on the map.'}`;
+    }
+
+    function handleWrongCountryAnswer(value) {
+      const entered = normalize(value);
+      const selectedName = normalize(selectedCountry.name);
+      const canonical = normalize(canonicalCountryInput(value));
+      const validCountry = [...ENGLISH_COUNTRIES].some(
+        name => normalize(name) === entered || normalize(name) === canonical
+      ) || COUNTRY_ALIASES.has(entered);
+
+      const caseOnlyError = [...ENGLISH_COUNTRIES].some(
+        name => normalizeForCaseCheck(name) === normalizeForCaseCheck(value)
+      ) && !validCountry;
+
+      const newAttemptCount = (countryAttempts.get(selectedCountry.name) || 0) + 1;
+      countryAttempts.set(selectedCountry.name, newAttemptCount);
+
+      countryInput.classList.remove('shake');
+      void countryInput.offsetWidth;
+      countryInput.classList.add('shake');
+
+      if (caseOnlyError) {
+        setCountryFeedback(
+          'Check the capitalization and try again.',
+          'error'
+        );
+      } else if (validCountry && canonical !== selectedName) {
+        setCountryFeedback(
+          'That is a different country. Try again.',
+          'error'
+        );
+      } else {
+        setCountryFeedback(
+          'Check the spelling and capitalization, then try again.',
+          'error'
+        );
+      }
+
+      if (newAttemptCount >= 2) {
+        countryFeedback.textContent += ` ${getCountryHint(selectedCountry.name)}`;
+      }
+
+      countryInput.focus();
+    }
+
+    function markCountryCorrect() {
+      const name = selectedCountry.name;
+      const path = selectedCountry.path;
+
+      solvedCountries.add(name);
+      path.classList.remove('active');
+      path.classList.add('correct');
+      addCountryLabel(name, path);
+
+      setCountryFeedback(
+        'Correct! The name stays on the map.',
+        'success'
+      );
+
+      updateCountrySolvedList();
+
+      setTimeout(() => {
+        clearCountrySelection();
+      }, 850);
+    }
+
+    function checkCountryAnswer() {
+      if (!selectedCountry) return;
+
+      const entered = canonicalCountryInput(countryInput.value);
+
+      if (!normalize(entered)) {
+        setCountryFeedback('Type an answer first.', 'error');
+        countryInput.focus();
+        return;
+      }
+
+      if (normalize(entered) === normalize(selectedCountry.name)) {
+        markCountryCorrect();
+      } else {
+        handleWrongCountryAnswer(countryInput.value);
+      }
+    }
+
     function renderStep2Map(geojson) {
       worldMapStep2.innerHTML = '';
+      solvedCountries.clear();
+      countryAttempts.clear();
+      selectedCountry = null;
+      updateCountrySolvedList();
 
       const ocean = document.createElementNS(
         'http://www.w3.org/2000/svg',
@@ -827,10 +1196,21 @@
         path.setAttribute('d', geometryPath(feature.geometry));
 
         const countryName = featureCountryName(feature);
-        path.setAttribute(
-          'class',
-          ENGLISH_COUNTRIES.has(countryName) ? 'land english-country' : 'land'
-        );
+        const isEnglishCountry = ENGLISH_COUNTRIES.has(countryName);
+        path.setAttribute('class', isEnglishCountry ? 'land english-country' : 'land');
+
+        if (isEnglishCountry) {
+          path.setAttribute('tabindex', '0');
+          path.setAttribute('role', 'button');
+          path.setAttribute('aria-label', 'Dark country');
+          path.addEventListener('click', () => selectCountry(countryName, path));
+          path.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              selectCountry(countryName, path);
+            }
+          });
+        }
 
         worldMapStep2.appendChild(path);
       });
@@ -847,6 +1227,12 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function openStepFromHash(geojson) {
+      if (window.location.hash === '#step2') {
+        goToStep2(geojson);
+      }
+    }
+
     async function init() {
       try {
         const response = await fetch(GEOJSON_URL, {
@@ -860,6 +1246,7 @@
         const geojson = await response.json();
         currentGeojson = geojson;
         renderMap(geojson);
+        openStepFromHash(geojson);
 
       } catch (error) {
         loading.innerHTML = `
@@ -885,6 +1272,25 @@
 
       if (event.key === 'Escape') {
         clearSelection();
+      }
+    });
+
+    countryCheckBtn.addEventListener('click', checkCountryAnswer);
+    countryClearBtn.addEventListener('click', clearCountrySelection);
+
+    countryInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        checkCountryAnswer();
+      }
+
+      if (event.key === 'Escape') {
+        clearCountrySelection();
+      }
+    });
+
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash === '#step2' && currentGeojson) {
+        goToStep2(currentGeojson);
       }
     });
 
